@@ -242,24 +242,30 @@
             
             htmlList += `<li><strong>Strategi:</strong> Tetap di motor. Waktu tunggu singkat.</li>`;
             htmlList += `<li>Jangan main HP saat sudah dekat nozzle (bisa ditegur).</li>`;
+            htmlList += `<li>Siapkan uang pas dari sekarang agar proses lebih cepat.</li>`;
 
-        } else if (totalMenit <= 120) {
+        } else if (totalMenit <= 240) {
             stratCard.classList.add('warning');
-            stratHeader.innerText = "⚠️ STATUS: SIAGA (BERTAHAN)";
+            stratHeader.innerText = "⚠️ STATUS: WAJAR (KRISIS BBM)";
             document.getElementById('durasi').style.color = "#d29922";
             
-            htmlList += `<li><strong>Strategi:</strong> Matikan mesin. Standar samping.</li>`;
-            htmlList += `<li>Manfaatkan waktu: Bisa sambil baca jurnal/skripsi di HP.</li>`;
-            htmlList += `<li>Waspada penyusup dari samping kiri. Rapatkan barisan.</li>`;
+            htmlList += `<li><strong>Strategi:</strong> Matikan mesin. Standar samping. Siap bertahan lama.</li>`;
+            htmlList += `<li>🕐 Waktu tunggu ini <strong>wajar</strong> di masa krisis BBM.</li>`;
+            htmlList += `<li>📱 Manfaatkan waktu: Baca buku, jurnal, atau podcast edukatif.</li>`;
+            htmlList += `<li>🥤 Bawa minum dan camilan ringan untuk bertahan.</li>`;
+            htmlList += `<li>🛡️ Waspada penyusup dari samping kiri. Rapatkan barisan.</li>`;
+            htmlList += `<li>💡 Gunakan payung/topi jika cuaca panas untuk menghindari dehidrasi.</li>`;
 
         } else {
             stratCard.classList.add('danger');
-            stratHeader.innerText = "⛔ STATUS: BAHAYA (PULANG)";
+            stratHeader.innerText = "⛔ STATUS: BAHAYA (TERLALU LAMA)";
             document.getElementById('durasi').style.color = "#f85149";
             
-            htmlList += `<li><strong>Strategi:</strong> Batalkan misi. Terlalu berisiko.</li>`;
-            htmlList += `<li>Cari penjual eceran terdekat untuk isi 1 liter saja (darurat).</li>`;
-            htmlList += `<li>Datang kembali besok saat <strong>Pagi</strong>.</li>`;
+            htmlList += `<li><strong>Strategi:</strong> Pertimbangkan untuk batalkan misi. Waktu tunggu >4 jam sangat berisiko.</li>`;
+            htmlList += `<li>⏰ Antrian ini sudah melewati batas wajar, bahkan di masa krisis.</li>`;
+            htmlList += `<li>⛽ Cari penjual eceran terdekat untuk isi 1-2 liter saja (darurat).</li>`;
+            htmlList += `<li>🌅 Datang kembali besok saat <strong>Pagi Buta (04:00-06:00)</strong> untuk antrian lebih pendek.</li>`;
+            htmlList += `<li>🏍️ Jika bensin masih cukup, coba cari SPBU lain yang lebih sepi.</li>`;
         }
 
         // Tambahan
