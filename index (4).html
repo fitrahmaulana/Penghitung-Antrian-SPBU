@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategi SPBU Aceh Final</title>
+    <style>
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: #0d1117; color: #c9d1d9; padding: 10px; margin: 0; }
+        .container { max-width: 100%; background-color: #161b22; padding: 20px; border-radius: 16px; border: 1px solid #30363d; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        
+        /* Header */
+        h3 { text-align: center; color: #58a6ff; margin-top: 0; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; }
+        .dev-name { text-align: center; font-size: 0.8em; color: #8b949e; margin-bottom: 25px; letter-spacing: 0.5px; }
+        .dev-name span { color: #238636; font-weight: bold; border-bottom: 1px dashed #238636; }
+
+        label { display: block; margin-top: 15px; color: #8b949e; font-size: 0.85em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        /* Inputs */
+        select, input { 
+            width: 100%; padding: 14px; margin-top: 8px; 
+            background: #0d1117; border: 1px solid #30363d; 
+            color: #fff; border-radius: 8px; font-size: 16px; box-sizing: border-box; transition: all 0.2s;
+        }
+        input:focus, select:focus { border-color: #58a6ff; outline: none; background: #1c2128; }
+
+        /* Button */
+        button { 
+            width: 100%; padding: 16px; margin-top: 30px; 
+            background: linear-gradient(135deg, #1f6feb, #238636); 
+            border: none; border-radius: 10px; 
+            color: white; font-weight: 800; font-size: 16px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(31, 111, 235, 0.3); transition: transform 0.1s;
+        }
+        button:active { transform: scale(0.97); }
+
+        /* Result Panel */
+        .result-panel { margin-top: 25px; display: none; animation: slideUp 0.4s ease-out; }
+        
+        .time-card {
+            text-align: center; padding: 20px;
+            background: #21262d; border-radius: 12px;
+            margin-bottom: 20px; border: 1px solid #30363d;
+        }
+        .big-time { font-size: 2.5em; font-weight: 800; display: block; margin: 5px 0; color: #fff; line-height: 1; }
+        .sub-time { color: #58a6ff; font-size: 0.9em; font-weight: 600; }
+
+        /* Strategy List */
+        .strat-card {
+            background: #1c2128; border-radius: 12px; padding: 0; overflow: hidden;
+            border-left: 6px solid #30363d;
+        }
+        .strat-header {
+            background: rgba(255,255,255,0.05); padding: 12px 20px;
+            font-weight: bold; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;
+        }
+        ul { margin: 0; padding: 15px 20px 15px 35px; }
+        li { margin-bottom: 10px; line-height: 1.5; color: #e6edf3; }
+
+        /* Data Specs (Footer) */
+        .data-specs {
+            margin-top: 30px; padding-top: 20px;
+            border-top: 1px solid #30363d;
+        }
+        .specs-title { font-size: 0.75em; color: #8b949e; text-transform: uppercase; font-weight: bold; margin-bottom: 10px; display: block;}
+        .specs-table { width: 100%; font-size: 0.75em; color: #8b949e; border-collapse: collapse; }
+        .specs-table td { padding: 4px 0; border-bottom: 1px solid #21262d; }
+        .specs-table tr:last-child td { border-bottom: none; }
+        .specs-val { text-align: right; color: #c9d1d9; font-family: monospace; }
+
+        /* Status Colors */
+        .safe { border-left-color: #238636; } .safe .strat-header { color: #238636; }
+        .warning { border-left-color: #d29922; } .warning .strat-header { color: #d29922; }
+        .danger { border-left-color: #f85149; } .danger .strat-header { color: #f85149; }
+
+        .credit-footer { text-align: center; margin-top: 25px; font-size: 0.7em; color: #484f58; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3>⛽ Kalkulator BBM Aceh</h3>
+    <div class="dev-name">Tools by <span>Fitrah Maulana</span></div>
+
+    <label>1. Jenis Motor Anda</label>
+    <select id="tipeMotor">
+        <option value="4">Matic Kecil (Beat, Mio, Scoopy) - 4L</option>
+        <option value="5.5" selected>Matic Sedang (Aerox, Vario 160) - 5.5L</option>
+        <option value="7">Matic Besar (Nmax, PCX) - 7L</option>
+        <option value="4">Bebek (Supra, Revo, Vega) - 4L</option>
+        <option value="11">Sport (Vixion, CB150, CBR) - 11L</option>
+    </select>
+
+    <label>2. Panjang Antrian (Meter)</label>
+    <input type="number" id="jarak" placeholder="Estimasi Visual (Cth: 800)" inputmode="numeric">
+
+    <label>3. Konfigurasi Petugas</label>
+    <select id="config">
+        <option value="1">1 Petugas = 1 Jalur (Normal)</option>
+        <option value="2">1 Petugas = 2 Jalur (Gantian Kiri-Kanan)</option>
+        <option value="0.5">2 Petugas = 1 Jalur (Cepat)</option>
+    </select>
+
+    <label>4. Kondisi Antrian Depan</label>
+    <select id="kondisi">
+        <option value="2.5">Tertib (Dominan Motor Pribadi)</option>
+        <option value="4.5">Campuran (Ada Becak/Thunder)</option>
+        <option value="7.0">Rusuh (Banyak Jerigen)</option>
+    </select>
+
+    <button onclick="hitung()">ANALISA SITUASI & STRATEGI</button>
+
+    <div id="panel" class="result-panel">
+        
+        <div class="time-card">
+            <span style="font-size:0.8em; color:#8b949e; letter-spacing:1px;">ESTIMASI WAKTU TUNGGU</span>
+            <span id="durasi" class="big-time">0j 0m</span>
+            <span id="jamKelar" class="sub-time">Selesai Pukul: --:-- WIB</span>
+        </div>
+
+        <div id="stratCard" class="strat-card">
+            <div id="stratHeader" class="strat-header">REKOMENDASI TAKTIS</div>
+            <ul id="stratList">
+                </ul>
+        </div>
+    </div>
+
+    <div class="data-specs">
+        <span class="specs-title">📊 Transparansi Data & Algoritma</span>
+        <table class="specs-table">
+            <tr>
+                <td>Space Per Motor (Rapat)</td>
+                <td class="specs-val">2.1 Meter</td>
+            </tr>
+            <tr>
+                <td>Avg. Waktu Service (Normal)</td>
+                <td class="specs-val">2.5 Menit</td>
+            </tr>
+            <tr>
+                <td>Avg. Waktu Service (Rusuh)</td>
+                <td class="specs-val">4.5 - 7.0 Menit</td>
+            </tr>
+            <tr>
+                <td>Penalty Petugas Gantian</td>
+                <td class="specs-val">2x (Double Time)</td>
+            </tr>
+            <tr>
+                <td>Harga Acuan (Darurat)</td>
+                <td class="specs-val">Pertalite 10k / Pertamax 13.5k</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="credit-footer">
+        © 2025 Developed by Fitrah Maulana
+    </div>
+</div>
+
+<script>
+    function hitung() {
+        // --- INPUT ---
+        let tankSize = parseFloat(document.getElementById('tipeMotor').value);
+        let jarak = parseFloat(document.getElementById('jarak').value);
+        let configVal = parseFloat(document.getElementById('config').value);
+        let speedVal = parseFloat(document.getElementById('kondisi').value);
+
+        if (!jarak) { alert("Masukkan jarak antrian dulu!"); return; }
+
+        // --- ALGORITMA UTAMA ---
+        // Jumlah motor di depan
+        let jumlahMotor = Math.ceil(jarak / 2.1);
+        
+        // Total menit menunggu
+        let totalMenit = jumlahMotor * speedVal * configVal;
+
+        // --- ALGORITMA BIAYA (ROUND UP 5000) ---
+        // Estimasi Full Tank dari Kosong
+        let biayaPertalite = Math.ceil((tankSize * 10000)/5000)*5000;
+        let biayaPertamax = Math.ceil((tankSize * 13500)/5000)*5000;
+
+        // --- KONVERSI WAKTU ---
+        let jam = Math.floor(totalMenit / 60);
+        let menit = Math.floor(totalMenit % 60);
+
+        let now = new Date();
+        let finishTime = new Date(now.getTime() + totalMenit * 60000);
+        let finishStr = finishTime.getHours().toString().padStart(2, '0') + ":" + 
+                        finishTime.getMinutes().toString().padStart(2, '0');
+
+        // --- DISPLAY ---
+        document.getElementById('durasi').innerText = `${jam} Jam ${menit} Menit`;
+        document.getElementById('jamKelar').innerText = `Giliran Anda: Pukul ${finishStr} WIB`;
+
+        let panel = document.getElementById('panel');
+        let stratCard = document.getElementById('stratCard');
+        let stratHeader = document.getElementById('stratHeader');
+        let stratList = document.getElementById('stratList');
+        
+        panel.style.display = "block";
+        
+        // Reset Class
+        stratCard.classList.remove('safe', 'warning', 'danger');
+
+        // --- LOGIC STRATEGI ---
+        let htmlList = "";
+
+        // Strategi Biaya
+        htmlList += `<li style="font-weight:bold; color:#fff; padding-bottom:10px; border-bottom:1px dashed #30363d;">
+            💰 Siapkan Uang Pas (Biar Cepat):<br>
+            <span style="color:#238636">Pertalite ~Rp ${biayaPertalite.toLocaleString()}</span> / 
+            <span style="color:#58a6ff">Pertamax ~Rp ${biayaPertamax.toLocaleString()}</span>
+        </li>`;
+
+        // Strategi Waktu
+        if (totalMenit <= 60) {
+            // GREEN ZONE
+            stratCard.classList.add('safe');
+            stratHeader.innerText = "✅ STATUS: SANGAT AMAN";
+            document.getElementById('durasi').style.color = "#238636";
+            
+            htmlList += `<li>Antrian sangat ideal. Jangan keluar barisan.</li>`;
+            htmlList += `<li>Buka jok/tangki 2 antrian sebelum giliran anda.</li>`;
+
+        } else if (totalMenit <= 120) {
+            // YELLOW ZONE
+            stratCard.classList.add('warning');
+            stratHeader.innerText = "⚠️ STATUS: WASPADA";
+            document.getElementById('durasi').style.color = "#d29922";
+            
+            htmlList += `<li><strong>Matikan mesin motor!</strong> Hemat BBM saat diam.</li>`;
+            htmlList += `<li>Cek HP & Air Minum. Anda akan berdiri > 1 Jam.</li>`;
+            htmlList += `<li>Perhatikan pergerakan: Jika macet > 15 menit, cek apakah petugas istirahat.</li>`;
+
+        } else {
+            // RED ZONE
+            stratCard.classList.add('danger');
+            stratHeader.innerText = "⛔ STATUS: BAHAYA (PULANG!)";
+            document.getElementById('durasi').style.color = "#f85149";
+            
+            htmlList += `<li><strong>Batalkan Niat.</strong> Risiko BBM habis sebelum giliran > 80%.</li>`;
+            htmlList += `<li>Waktu tunggu ${jam} jam lebih baik dipakai untuk istirahat/skripsi.</li>`;
+            htmlList += `<li>Strategi Terbaik: <strong>Datang besok subuh jam 05:30 WIB.</strong></li>`;
+        }
+
+        // Strategi Khusus Aerox
+        if (tankSize === 5.5) {
+            htmlList += `<li>💡 <strong>Tips Aerox:</strong> Manfaatkan tangki depan. Anda tidak perlu turun dari motor saat antrian padat merayap.</li>`;
+        }
+
+        // Strategi Petugas Gantian
+        if (configVal === 2) {
+             htmlList += `<li style="color:#f85149; font-weight:bold;">⚠️ WARNING: Petugas melayani 2 jalur (kiri-kanan) membuat antrian 2x lebih lambat dari normal!</li>`;
+        }
+
+        stratList.innerHTML = htmlList;
+    }
+</script>
+
+</body>
+</html>
