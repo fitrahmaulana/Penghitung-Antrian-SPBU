@@ -156,8 +156,9 @@
     // SYNC METER <-> MOTOR
     function syncToMotor() {
         let meter = parseFloat(document.getElementById('inputMeter').value);
+        const avgPanjangMotor = 2.1;
         if (!isNaN(meter)) {
-            document.getElementById('inputMotor').value = Math.ceil(meter / 2);
+            document.getElementById('inputMotor').value = Math.ceil(meter / avgPanjangMotor);
         } else {
             document.getElementById('inputMotor').value = "";
         }
