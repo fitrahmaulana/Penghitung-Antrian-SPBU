@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator BBM Aceh V6</title>
+    <title>Kalkulator BBM Aceh V7</title>
     <style>
         body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: #0d1117; color: #c9d1d9; padding: 10px; margin: 0; }
         .container { max-width: 100%; background-color: #161b22; padding: 20px; border-radius: 16px; border: 1px solid #30363d; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
@@ -14,21 +14,20 @@
 
         label { display: block; margin-top: 15px; color: #8b949e; font-size: 0.85em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* Grid System untuk Input Sebelahan */
+        /* Grid System */
         .row { display: flex; gap: 10px; }
         .col { flex: 1; }
 
-        /* Input Styling dengan Suffix */
+        /* Inputs */
         .input-group { position: relative; width: 100%; margin-top: 8px; }
         
         select, input { 
-            width: 100%; padding: 14px; padding-right: 40px; /* Space untuk suffix */
+            width: 100%; padding: 14px; padding-right: 40px;
             background: #0d1117; border: 1px solid #30363d; 
             color: #fff; border-radius: 8px; font-size: 16px; box-sizing: border-box; transition: all 0.2s;
         }
         input:focus, select:focus { border-color: #58a6ff; outline: none; background: #1c2128; }
 
-        /* Suffix (Satuan di kanan) */
         .suffix {
             position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
             color: #8b949e; font-size: 0.85em; font-weight: 600; pointer-events: none;
@@ -110,15 +109,18 @@
     </div>
 
     <label>3. Kecepatan Pelayanan</label>
+    
     <div class="input-group" style="margin-bottom: 8px;">
         <select id="presetKondisi" onchange="applyPreset()">
-            <option value="1.5">A. Cepat (Antrian Lancar)</option>
-            <option value="2.5">B. Standar (Normal)</option>
-            <option value="5.0">C. Lambat (Banyak Jerigen)</option>
+            <option value="1.5">A. Lancar (1.5 menit)</option>
+            <option value="2.5" selected>B. Normal (2.5 menit)</option>
+            <option value="5.0">C. Rusuh/Jerigen (5.0 menit)</option>
+            <option value="custom" hidden>D. Custom (Manual Input)</option>
         </select>
     </div>
+    
     <div class="input-group">
-        <input type="number" id="waktuPerMotor" value="1.5" step="0.1">
+        <input type="number" id="waktuPerMotor" value="2.5" step="0.1" oninput="triggerCustom()">
         <span class="suffix">menit/mtr</span>
     </div>
 
@@ -151,11 +153,10 @@
 </div>
 
 <script>
-    // FUNGSI SYNC METER <-> MOTOR
+    // SYNC METER <-> MOTOR
     function syncToMotor() {
         let meter = parseFloat(document.getElementById('inputMeter').value);
         if (!isNaN(meter)) {
-            // Asumsi 1 motor makan 2 meter (biar gampang hitung)
             document.getElementById('inputMotor').value = Math.ceil(meter / 2);
         } else {
             document.getElementById('inputMotor').value = "";
@@ -171,14 +172,24 @@
         }
     }
 
-    // FUNGSI PRESET WAKTU
+    // LOGIKA CUSTOM INPUT
     function applyPreset() {
-        let val = document.getElementById('presetKondisi').value;
-        document.getElementById('waktuPerMotor').value = val;
+        let select = document.getElementById('presetKondisi');
+        let input = document.getElementById('waktuPerMotor');
+        
+        if (select.value !== 'custom') {
+            input.value = select.value;
+        }
     }
 
+    function triggerCustom() {
+        // Saat user ketik angka manual, ubah dropdown ke 'Custom'
+        let select = document.getElementById('presetKondisi');
+        select.value = 'custom';
+    }
+
+    // HITUNG UTAMA
     function hitung() {
-        // INPUT
         let tankSize = parseFloat(document.getElementById('tipeMotor').value);
         let jumlahMotor = parseFloat(document.getElementById('inputMotor').value);
         let configVal = parseFloat(document.getElementById('config').value);
@@ -186,10 +197,9 @@
 
         if (!jumlahMotor) { alert("Isi panjang antrian (meter) atau jumlah motor!"); return; }
 
-        // HITUNG
         let totalMenit = jumlahMotor * speedVal * configVal;
 
-        // BIAYA
+        // HITUNG UANG (Pembulatan 5000)
         let biayaPertalite = Math.ceil((tankSize * 10000)/5000)*5000;
         let biayaPertamax = Math.ceil((tankSize * 13500)/5000)*5000;
 
@@ -202,7 +212,7 @@
         let finishStr = finishTime.getHours().toString().padStart(2, '0') + ":" + 
                         finishTime.getMinutes().toString().padStart(2, '0');
 
-        // DISPLAY
+        // TAMPILKAN
         document.getElementById('durasi').innerText = `${jam} Jam ${menit} Menit`;
         document.getElementById('jamKelar').innerText = `Giliran Anda: Pukul ${finishStr} WIB`;
 
@@ -214,36 +224,46 @@
         panel.style.display = "block";
         stratCard.classList.remove('safe', 'warning', 'danger');
 
-        // STRATEGI
+        // LOGIKA STRATEGI
         let htmlList = "";
 
-        // Info Cash
-        htmlList += `<li style="font-weight:bold; color:#fff; padding-bottom:10px; border-bottom:1px dashed #30363d;">
-            💰 Siapkan Uang Pas:<br>
-            <span style="color:#238636">Pertalite ~Rp ${biayaPertalite.toLocaleString()}</span> / 
-            <span style="color:#58a6ff">Pertamax ~Rp ${biayaPertamax.toLocaleString()}</span>
+        // Strategi Cash
+        htmlList += `<li style="border-bottom:1px dashed #30363d; padding-bottom:10px; margin-bottom:10px;">
+            💰 <strong>Siapkan Cash (Pas):</strong><br>
+            <span style="color:#238636">Pertalite: Rp ${biayaPertalite.toLocaleString()}</span><br>
+            <span style="color:#58a6ff">Pertamax: Rp ${biayaPertamax.toLocaleString()}</span>
         </li>`;
 
         if (totalMenit <= 45) {
             stratCard.classList.add('safe');
             stratHeader.innerText = "✅ STATUS: SANGAT AMAN";
             document.getElementById('durasi').style.color = "#238636";
-            htmlList += `<li>Antrian lancar. Tetap di barisan.</li>`;
+            
+            htmlList += `<li><strong>Strategi:</strong> Tetap di motor. Waktu tunggu singkat.</li>`;
+            htmlList += `<li>Jangan main HP saat sudah dekat nozzle (bisa ditegur).</li>`;
+
         } else if (totalMenit <= 120) {
             stratCard.classList.add('warning');
-            stratHeader.innerText = "⚠️ STATUS: WASPADA";
+            stratHeader.innerText = "⚠️ STATUS: SIAGA (BERTAHAN)";
             document.getElementById('durasi').style.color = "#d29922";
-            htmlList += `<li>Matikan mesin motor sekarang.</li>`;
-            htmlList += `<li>Cek HP & Air Minum.</li>`;
+            
+            htmlList += `<li><strong>Strategi:</strong> Matikan mesin. Standar samping.</li>`;
+            htmlList += `<li>Manfaatkan waktu: Bisa sambil baca jurnal/skripsi di HP.</li>`;
+            htmlList += `<li>Waspada penyusup dari samping kiri. Rapatkan barisan.</li>`;
+
         } else {
             stratCard.classList.add('danger');
-            stratHeader.innerText = "⛔ STATUS: BAHAYA (PULANG!)";
+            stratHeader.innerText = "⛔ STATUS: BAHAYA (PULANG)";
             document.getElementById('durasi').style.color = "#f85149";
-            htmlList += `<li>Saran: Pulang, cari eceran, atau datang besok subuh.</li>`;
+            
+            htmlList += `<li><strong>Strategi:</strong> Batalkan misi. Terlalu berisiko.</li>`;
+            htmlList += `<li>Cari penjual eceran terdekat untuk isi 1 liter saja (darurat).</li>`;
+            htmlList += `<li>Datang kembali besok saat <strong>Subuh (05:30)</strong>.</li>`;
         }
 
-        if (tankSize === 5.5) htmlList += `<li>💡 <strong>Aerox:</strong> Isi bensin sambil duduk di motor agar antrian belakang lebih cepat.</li>`;
-        if (configVal === 2) htmlList += `<li style="color:#f85149;">⚠️ Petugas 2 jalur membuat antrian 2x lebih lambat.</li>`;
+        // Tambahan
+        if (tankSize === 5.5) htmlList += `<li>💡 <strong>Aerox Advantage:</strong> Anda tidak perlu turun motor. Lebih sigap maju.</li>`;
+        if (configVal === 2) htmlList += `<li style="color:#f85149; font-weight:bold;">⚠️ Petugas Double Job (Kiri-Kanan) memperlambat antrian 2x lipat!</li>`;
 
         stratList.innerHTML = htmlList;
     }
