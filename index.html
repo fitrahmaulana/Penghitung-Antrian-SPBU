@@ -250,11 +250,11 @@
             document.getElementById('durasi').style.color = "#d29922";
             
             htmlList += `<li><strong>Strategi:</strong> Matikan mesin. Standar samping. Siap bertahan lama.</li>`;
-            htmlList += `<li>🕐 Waktu tunggu ini <strong>wajar</strong> di masa krisis BBM.</li>`;
-            htmlList += `<li>📱 Manfaatkan waktu: Baca buku, jurnal, atau podcast edukatif.</li>`;
-            htmlList += `<li>🥤 Bawa minum dan camilan ringan untuk bertahan.</li>`;
-            htmlList += `<li>🛡️ Waspada penyusup dari samping kiri. Rapatkan barisan.</li>`;
-            htmlList += `<li>💡 Gunakan payung/topi jika cuaca panas untuk menghindari dehidrasi.</li>`;
+            htmlList += `<li>Waktu tunggu ini <strong>wajar</strong> di masa krisis BBM.</li>`;
+            htmlList += `<li>Manfaatkan waktu: Baca buku, jurnal, atau podcast edukatif.</li>`;
+            htmlList += `<li>Bawa minum dan camilan ringan untuk bertahan.</li>`;
+            htmlList += `<li>Waspada penyusup dari samping kiri. Rapatkan barisan.</li>`;
+            htmlList += `<li>Gunakan payung/topi jika cuaca panas untuk menghindari dehidrasi.</li>`;
 
         } else {
             stratCard.classList.add('danger');
@@ -269,7 +269,7 @@
         }
 
         // Tambahan
-        if (tankSize === 5.5) htmlList += `<li>💡 <strong>Aerox Advantage:</strong> Anda tidak perlu turun motor. Lebih sigap maju.</li>`;
+        if (tankSize === 5.5) htmlList += `<li><strong>Aerox Advantage:</strong> Anda tidak perlu turun motor. Lebih sigap maju.</li>`;
         if (configVal === 2) htmlList += `<li style="color:#f85149; font-weight:bold;">⚠️ Petugas Double Job (Kiri-Kanan) memperlambat antrian 2x lipat!</li>`;
 
         stratList.innerHTML = htmlList;
