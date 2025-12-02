@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator BBM Aceh V7</title>
+    <title>Kalkulator Antrian BBM Aceh</title>
     <style>
         body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: #0d1117; color: #c9d1d9; padding: 10px; margin: 0; }
         .container { max-width: 100%; background-color: #161b22; padding: 20px; border-radius: 16px; border: 1px solid #30363d; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
@@ -78,7 +78,7 @@
 <body>
 
 <div class="container">
-    <h3>⛽ Kalkulator BBM Aceh</h3>
+    <h3>⛽ Kalkulator Antrian BBM Aceh</h3>
     <div class="dev-name">Tools by <span>Fitrah Maulana</span></div>
 
     <label>1. Jenis Motor Anda</label>
@@ -108,13 +108,13 @@
         </div>
     </div>
 
-    <label>3. Kecepatan Pelayanan</label>
+    <label>3. Kecepatan Pelayanan (Kondisi Antrian)</label>
     
     <div class="input-group" style="margin-bottom: 8px;">
         <select id="presetKondisi" onchange="applyPreset()">
-            <option value="1.5">A. Lancar (1.5 menit)</option>
-            <option value="2.5" selected>B. Normal (2.5 menit)</option>
-            <option value="5.0">C. Rusuh/Jerigen (5.0 menit)</option>
+            <option value="1.5" selected>A. Lancar (1.5 menit)</option>
+            <option value="2.5">B. Sedikit lama(2.5 menit)</option>
+            <option value="5.0">C. Banyak Jerigen (5.0 menit)</option>
             <option value="custom" hidden>D. Custom (Manual Input)</option>
         </select>
     </div>
