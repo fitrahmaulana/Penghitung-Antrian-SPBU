@@ -334,6 +334,12 @@
 </div>
 
 <script>
+    // CONSTANTS
+    const IDLE_FUEL_CONSUMPTION_PER_HOUR = 0.1; // Liter per jam (motor matic idle)
+    const PERTALITE_PRICE = 10000; // Rp per liter
+    const AVG_MOTORCYCLE_LENGTH = 2.1; // Meter per motor
+    const MAX_HISTORY_ITEMS = 10;
+
     // GLOBAL STATE
     let lastCalculation = null;
 
@@ -360,50 +366,61 @@
             return;
         }
 
-        const history = JSON.parse(localStorage.getItem('queueHistory') || '[]');
-        const timestamp = new Date().toLocaleString('id-ID');
-        
-        const historyItem = {
-            ...lastCalculation,
-            timestamp: timestamp,
-            id: Date.now()
-        };
+        try {
+            const history = JSON.parse(localStorage.getItem('queueHistory') || '[]');
+            const timestamp = new Date().toLocaleString('id-ID');
+            
+            const historyItem = {
+                ...lastCalculation,
+                timestamp: timestamp,
+                id: Date.now()
+            };
 
-        history.unshift(historyItem);
-        
-        // Keep only last 10 items
-        if (history.length > 10) {
-            history.pop();
+            history.unshift(historyItem);
+            
+            // Keep only last 10 items
+            if (history.length > MAX_HISTORY_ITEMS) {
+                history.pop();
+            }
+
+            localStorage.setItem('queueHistory', JSON.stringify(history));
+            loadHistory();
+            alert("✅ Perhitungan disimpan ke riwayat!");
+        } catch (e) {
+            console.error('Error saving to history:', e);
+            alert("❌ Gagal menyimpan ke riwayat. Coba lagi.");
         }
-
-        localStorage.setItem('queueHistory', JSON.stringify(history));
-        loadHistory();
-        alert("✅ Perhitungan disimpan ke riwayat!");
     }
 
     function loadHistory() {
-        const history = JSON.parse(localStorage.getItem('queueHistory') || '[]');
-        const historyPanel = document.getElementById('historyPanel');
-        const historyList = document.getElementById('historyList');
+        try {
+            const history = JSON.parse(localStorage.getItem('queueHistory') || '[]');
+            const historyPanel = document.getElementById('historyPanel');
+            const historyList = document.getElementById('historyList');
 
-        if (history.length === 0) {
-            historyPanel.style.display = 'none';
-            return;
+            if (history.length === 0) {
+                historyPanel.style.display = 'none';
+                return;
+            }
+
+            historyPanel.style.display = 'block';
+            historyList.innerHTML = '';
+
+            history.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <strong>${item.jumlahMotor} motor</strong> • ${item.totalMenit} menit<br>
+                    <span class="history-time">${item.timestamp}</span>
+                `;
+                div.onclick = () => loadFromHistory(item);
+                historyList.appendChild(div);
+            });
+        } catch (e) {
+            console.error('Error loading history:', e);
+            // Clear corrupted data
+            localStorage.removeItem('queueHistory');
         }
-
-        historyPanel.style.display = 'block';
-        historyList.innerHTML = '';
-
-        history.forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'history-item';
-            div.innerHTML = `
-                <strong>${item.jumlahMotor} motor</strong> • ${item.totalMenit} menit<br>
-                <span class="history-time">${item.timestamp}</span>
-            `;
-            div.onclick = () => loadFromHistory(item);
-            historyList.appendChild(div);
-        });
     }
 
     function loadFromHistory(item) {
@@ -440,24 +457,34 @@
             navigator.share({
                 title: 'Estimasi Antrian SPBU',
                 text: text
-            }).catch(() => {});
+            }).catch((error) => {
+                // User cancelled or sharing failed, try clipboard instead
+                if (error.name !== 'AbortError') {
+                    copyToClipboard(text);
+                }
+            });
         } else {
             // Fallback: copy to clipboard
-            navigator.clipboard.writeText(text).then(() => {
-                alert("✅ Hasil disalin ke clipboard!");
-            }).catch(() => {
-                alert("❌ Gagal menyalin. Coba lagi.");
-            });
+            copyToClipboard(text);
         }
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert("✅ Hasil disalin ke clipboard!");
+        }).catch((error) => {
+            console.error('Failed to copy to clipboard:', error);
+            alert("❌ Gagal menyalin. Coba lagi.");
+        });
     }
 
     // FUEL WASTE CALCULATOR
     function calculateFuelWaste(totalMenit) {
-        // Asumsi: Mesin idle mengkonsumsi 0.1 liter/jam untuk motor matic
-        const idleFuelConsumption = 0.1; // liter per jam
+        // Asumsi: Mesin idle mengkonsumsi IDLE_FUEL_CONSUMPTION_PER_HOUR liter/jam untuk motor matic
+        // Sumber: Rata-rata konsumsi idle motor injeksi modern
         const hours = totalMenit / 60;
-        const fuelWasted = (hours * idleFuelConsumption).toFixed(3);
-        const costWasted = Math.ceil(fuelWasted * 10000); // Pertalite Rp 10,000/L
+        const fuelWasted = (hours * IDLE_FUEL_CONSUMPTION_PER_HOUR).toFixed(3);
+        const costWasted = Math.ceil(fuelWasted * PERTALITE_PRICE);
 
         return {
             liters: fuelWasted,
@@ -469,9 +496,8 @@
     // SYNC METER <-> MOTOR
     function syncToMotor() {
         let meter = parseFloat(document.getElementById('inputMeter').value);
-        const avgPanjangMotor = 2.1;
         if (!isNaN(meter)) {
-            document.getElementById('inputMotor').value = Math.ceil(meter / avgPanjangMotor);
+            document.getElementById('inputMotor').value = Math.ceil(meter / AVG_MOTORCYCLE_LENGTH);
         } else {
             document.getElementById('inputMotor').value = "";
         }
@@ -480,7 +506,7 @@
     function syncToMeter() {
         let motor = parseFloat(document.getElementById('inputMotor').value);
         if (!isNaN(motor)) {
-            document.getElementById('inputMeter').value = motor * 2;
+            document.getElementById('inputMeter').value = motor * AVG_MOTORCYCLE_LENGTH;
         } else {
             document.getElementById('inputMeter').value = "";
         }
