@@ -5,14 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Antrian BBM Aceh</title>
     <style>
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: #0d1117; color: #c9d1d9; padding: 10px; margin: 0; }
-        .container { max-width: 100%; background-color: #161b22; padding: 20px; border-radius: 16px; border: 1px solid #30363d; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        
-        h3 { text-align: center; color: #58a6ff; margin-top: 0; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; }
-        .dev-name { text-align: center; font-size: 0.8em; color: #8b949e; margin-bottom: 25px; letter-spacing: 0.5px; }
-        .dev-name span { color: #238636; font-weight: bold; border-bottom: 1px dashed #238636; }
+        /* Theme Variables */
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --bg-input: #0d1117;
+            --border-color: #30363d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent-blue: #58a6ff;
+            --accent-green: #238636;
+            --shadow: rgba(0,0,0,0.4);
+        }
 
-        label { display: block; margin-top: 15px; color: #8b949e; font-size: 0.85em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        body.light-theme {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #ffffff;
+            --bg-input: #ffffff;
+            --border-color: #d0d7de;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+            --accent-blue: #0969da;
+            --accent-green: #1a7f37;
+            --shadow: rgba(0,0,0,0.1);
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background-color: var(--bg-primary); 
+            color: var(--text-primary); 
+            padding: 10px; 
+            margin: 0;
+            transition: all 0.3s ease;
+        }
+        .container { 
+            max-width: 100%; 
+            background-color: var(--bg-secondary); 
+            padding: 20px; 
+            border-radius: 16px; 
+            border: 1px solid var(--border-color); 
+            box-shadow: 0 4px 20px var(--shadow);
+            position: relative;
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.15);
+            box-shadow: 0 2px 10px var(--shadow);
+        }
+
+        h3 { text-align: center; color: var(--accent-blue); margin-top: 0; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; }
+        .dev-name { text-align: center; font-size: 0.8em; color: var(--text-secondary); margin-bottom: 25px; letter-spacing: 0.5px; }
+        .dev-name span { color: var(--accent-green); font-weight: bold; border-bottom: 1px dashed var(--accent-green); }
+
+        label { display: block; margin-top: 15px; color: var(--text-secondary); font-size: 0.85em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         
         /* Grid System */
         .row { display: flex; gap: 10px; }
@@ -23,14 +89,14 @@
         
         select, input { 
             width: 100%; padding: 14px; padding-right: 40px;
-            background: #0d1117; border: 1px solid #30363d; 
-            color: #fff; border-radius: 8px; font-size: 16px; box-sizing: border-box; transition: all 0.2s;
+            background: var(--bg-input); border: 1px solid var(--border-color); 
+            color: var(--text-primary); border-radius: 8px; font-size: 16px; box-sizing: border-box; transition: all 0.2s;
         }
-        input:focus, select:focus { border-color: #58a6ff; outline: none; background: #1c2128; }
+        input:focus, select:focus { border-color: var(--accent-blue); outline: none; background: var(--bg-tertiary); }
 
         .suffix {
             position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
-            color: #8b949e; font-size: 0.85em; font-weight: 600; pointer-events: none;
+            color: var(--text-secondary); font-size: 0.85em; font-weight: 600; pointer-events: none;
         }
 
         /* Button */
@@ -47,30 +113,127 @@
         .result-panel { margin-top: 25px; display: none; animation: slideUp 0.4s ease-out; }
         .time-card {
             text-align: center; padding: 20px;
-            background: #21262d; border-radius: 12px;
-            margin-bottom: 20px; border: 1px solid #30363d;
+            background: var(--bg-tertiary); border-radius: 12px;
+            margin-bottom: 20px; border: 1px solid var(--border-color);
         }
-        .big-time { font-size: 2.5em; font-weight: 800; display: block; margin: 5px 0; color: #fff; line-height: 1; }
-        .sub-time { color: #58a6ff; font-size: 0.9em; font-weight: 600; }
+        .big-time { font-size: 2.5em; font-weight: 800; display: block; margin: 5px 0; color: var(--text-primary); line-height: 1; }
+        .sub-time { color: var(--accent-blue); font-size: 0.9em; font-weight: 600; }
 
         /* Strategy List */
         .strat-card {
-            background: #1c2128; border-radius: 12px; padding: 0; overflow: hidden;
-            border-left: 6px solid #30363d;
+            background: var(--bg-input); border-radius: 12px; padding: 0; overflow: hidden;
+            border-left: 6px solid var(--border-color);
         }
         .strat-header {
             background: rgba(255,255,255,0.05); padding: 12px 20px;
             font-weight: bold; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;
         }
         ul { margin: 0; padding: 15px 20px 15px 35px; }
-        li { margin-bottom: 10px; line-height: 1.5; color: #e6edf3; }
+        li { margin-bottom: 10px; line-height: 1.5; color: var(--text-primary); }
 
         /* Colors */
         .safe { border-left-color: #238636; } .safe .strat-header { color: #238636; }
         .warning { border-left-color: #d29922; } .warning .strat-header { color: #d29922; }
         .danger { border-left-color: #f85149; } .danger .strat-header { color: #f85149; }
 
-        .credit-footer { text-align: center; margin-top: 25px; font-size: 0.7em; color: #484f58; }
+        .credit-footer { text-align: center; margin-top: 25px; font-size: 0.7em; color: var(--text-secondary); }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .action-btn:hover {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        /* History Panel */
+        .history-panel {
+            margin-top: 20px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .history-header {
+            font-weight: bold;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            color: var(--accent-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-item {
+            background: var(--bg-input);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .history-item:hover {
+            border-color: var(--accent-blue);
+            transform: translateX(5px);
+        }
+        .history-time {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        /* Fuel Waste Calculator */
+        .fuel-waste-card {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px solid var(--border-color);
+        }
+        .fuel-waste-header {
+            font-weight: bold;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            color: #d29922;
+        }
+        .fuel-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .fuel-stat:last-child {
+            border-bottom: none;
+        }
+        .fuel-label {
+            color: var(--text-secondary);
+        }
+        .fuel-value {
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -78,6 +241,8 @@
 <body>
 
 <div class="container">
+    <button class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema">🌓</button>
+    
     <h3>⛽ Kalkulator BBM Aceh</h3>
         <div class="dev-name">Tools by <span>Fitrah Maulana</span></div>
 
@@ -134,6 +299,15 @@
 
     <button onclick="hitung()">ANALISA SITUASI</button>
 
+    <!-- History Panel -->
+    <div id="historyPanel" class="history-panel" style="display:none;">
+        <div class="history-header">
+            <span>📋 RIWAYAT PERHITUNGAN</span>
+            <button class="action-btn" onclick="clearHistory()" style="flex:none; padding:5px 10px;">Hapus Semua</button>
+        </div>
+        <div id="historyList"></div>
+    </div>
+
     <div id="panel" class="result-panel">
         <div class="time-card">
             <span style="font-size:0.8em; color:#8b949e; letter-spacing:1px;">ESTIMASI WAKTU TUNGGU</span>
@@ -145,6 +319,18 @@
             <div id="stratHeader" class="strat-header">REKOMENDASI TAKTIS</div>
             <ul id="stratList"></ul>
         </div>
+
+        <!-- Fuel Waste Calculator -->
+        <div id="fuelWasteCard" class="fuel-waste-card">
+            <div class="fuel-waste-header">⚠️ KONSUMSI BBM SAAT ANTRI</div>
+            <div id="fuelWasteContent"></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn" onclick="shareResults()">📤 Bagikan Hasil</button>
+            <button class="action-btn" onclick="saveToHistory()">💾 Simpan ke Riwayat</button>
+        </div>
     </div>
     
     <div class="credit-footer">
@@ -153,12 +339,170 @@
 </div>
 
 <script>
+    // CONSTANTS
+    const IDLE_FUEL_CONSUMPTION_PER_HOUR = 0.1; // Liter per jam (motor matic idle)
+    const PERTALITE_PRICE = 10000; // Rp per liter
+    const AVG_MOTORCYCLE_LENGTH = 2.1; // Meter per motor
+    const MAX_HISTORY_ITEMS = 10;
+
+    // GLOBAL STATE
+    let lastCalculation = null;
+
+    // THEME TOGGLE
+    function toggleTheme() {
+        document.body.classList.toggle('light-theme');
+        const theme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+        localStorage.setItem('theme', theme);
+    }
+
+    // Load saved theme on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+        }
+        loadHistory();
+    });
+
+    // HISTORY MANAGEMENT
+    function saveToHistory() {
+        if (!lastCalculation) {
+            alert("Belum ada perhitungan untuk disimpan!");
+            return;
+        }
+
+        try {
+            const history = JSON.parse(localStorage.getItem('queueHistory') || '[]');
+            const timestamp = new Date().toLocaleString('id-ID');
+            
+            const historyItem = {
+                ...lastCalculation,
+                timestamp: timestamp,
+                id: Date.now()
+            };
+
+            history.unshift(historyItem);
+            
+            // Keep only last 10 items
+            if (history.length > MAX_HISTORY_ITEMS) {
+                history.pop();
+            }
+
+            localStorage.setItem('queueHistory', JSON.stringify(history));
+            loadHistory();
+            alert("✅ Perhitungan disimpan ke riwayat!");
+        } catch (e) {
+            console.error('Error saving to history:', e);
+            alert("❌ Gagal menyimpan ke riwayat. Coba lagi.");
+        }
+    }
+
+    function loadHistory() {
+        try {
+            const history = JSON.parse(localStorage.getItem('queueHistory') || '[]');
+            const historyPanel = document.getElementById('historyPanel');
+            const historyList = document.getElementById('historyList');
+
+            if (history.length === 0) {
+                historyPanel.style.display = 'none';
+                return;
+            }
+
+            historyPanel.style.display = 'block';
+            historyList.innerHTML = '';
+
+            history.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <strong>${item.jumlahMotor} motor</strong> • ${item.totalMenit} menit<br>
+                    <span class="history-time">${item.timestamp}</span>
+                `;
+                div.onclick = () => loadFromHistory(item);
+                historyList.appendChild(div);
+            });
+        } catch (e) {
+            console.error('Error loading history:', e);
+            // Clear corrupted data
+            localStorage.removeItem('queueHistory');
+        }
+    }
+
+    function loadFromHistory(item) {
+        document.getElementById('inputMotor').value = item.jumlahMotor;
+        document.getElementById('inputMeter').value = item.jumlahMotor * 2;
+        document.getElementById('waktuPerMotor').value = item.speedVal;
+        document.getElementById('config').value = item.configVal;
+        alert("✅ Data dimuat dari riwayat! Klik 'ANALISA SITUASI' untuk melihat hasil.");
+    }
+
+    function clearHistory() {
+        if (confirm("Yakin ingin menghapus semua riwayat?")) {
+            localStorage.removeItem('queueHistory');
+            loadHistory();
+            alert("✅ Riwayat dihapus!");
+        }
+    }
+
+    // SHARE FUNCTIONALITY
+    function shareResults() {
+        if (!lastCalculation) {
+            alert("Belum ada hasil untuk dibagikan!");
+            return;
+        }
+
+        const text = `⛽ Estimasi Antrian SPBU\n\n` +
+            `📊 Antrian: ${lastCalculation.jumlahMotor} motor\n` +
+            `⏱️ Waktu Tunggu: ${Math.floor(lastCalculation.totalMenit/60)} jam ${Math.floor(lastCalculation.totalMenit%60)} menit\n` +
+            `🏁 Selesai: ${lastCalculation.finishStr} WIB\n` +
+            `⚠️ Status: ${lastCalculation.status}\n\n` +
+            `Hitung sendiri di: https://antrianspbu.netlify.app/`;
+
+        if (navigator.share) {
+            navigator.share({
+                title: 'Estimasi Antrian SPBU',
+                text: text
+            }).catch((error) => {
+                // User cancelled or sharing failed, try clipboard instead
+                if (error.name !== 'AbortError') {
+                    copyToClipboard(text);
+                }
+            });
+        } else {
+            // Fallback: copy to clipboard
+            copyToClipboard(text);
+        }
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert("✅ Hasil disalin ke clipboard!");
+        }).catch((error) => {
+            console.error('Failed to copy to clipboard:', error);
+            alert("❌ Gagal menyalin. Coba lagi.");
+        });
+    }
+
+    // FUEL WASTE CALCULATOR
+    function calculateFuelWaste(totalMenit) {
+        // Asumsi: Mesin idle mengkonsumsi IDLE_FUEL_CONSUMPTION_PER_HOUR liter/jam untuk motor matic
+        // Sumber: Rata-rata konsumsi idle motor injeksi modern
+        const hours = totalMenit / 60;
+        const fuelWasted = (hours * IDLE_FUEL_CONSUMPTION_PER_HOUR).toFixed(3);
+        const costWasted = Math.ceil(fuelWasted * PERTALITE_PRICE);
+
+        return {
+            liters: fuelWasted,
+            cost: costWasted,
+            hours: hours.toFixed(1)
+        };
+    }
+
     // SYNC METER <-> MOTOR
     function syncToMotor() {
         let meter = parseFloat(document.getElementById('inputMeter').value);
-        const avgPanjangMotor = 2.1;
         if (!isNaN(meter)) {
-            document.getElementById('inputMotor').value = Math.ceil(meter / avgPanjangMotor);
+            document.getElementById('inputMotor').value = Math.ceil(meter / AVG_MOTORCYCLE_LENGTH);
         } else {
             document.getElementById('inputMotor').value = "";
         }
@@ -167,7 +511,7 @@
     function syncToMeter() {
         let motor = parseFloat(document.getElementById('inputMotor').value);
         if (!isNaN(motor)) {
-            document.getElementById('inputMeter').value = motor * 2;
+            document.getElementById('inputMeter').value = motor * AVG_MOTORCYCLE_LENGTH;
         } else {
             document.getElementById('inputMeter').value = "";
         }
@@ -227,6 +571,7 @@
 
         // LOGIKA STRATEGI
         let htmlList = "";
+        let status = "";
 
         // Strategi Cash
         htmlList += `<li style="border-bottom:1px dashed #30363d; padding-bottom:10px; margin-bottom:10px;">
@@ -239,6 +584,7 @@
             stratCard.classList.add('safe');
             stratHeader.innerText = "✅ STATUS: SANGAT AMAN";
             document.getElementById('durasi').style.color = "#238636";
+            status = "SANGAT AMAN";
             
             htmlList += `<li><strong>Strategi:</strong> Tetap di motor. Waktu tunggu singkat.</li>`;
             htmlList += `<li>Jangan main HP saat sudah dekat nozzle (bisa ditegur).</li>`;
@@ -248,6 +594,7 @@
             stratCard.classList.add('warning');
             stratHeader.innerText = "⚠️ STATUS: WAJAR (KRISIS BBM)";
             document.getElementById('durasi').style.color = "#d29922";
+            status = "WAJAR (KRISIS BBM)";
             
             htmlList += `<li><strong>Strategi:</strong> Matikan mesin. Standar samping. Siap bertahan lama.</li>`;
             htmlList += `<li>Waktu tunggu ini <strong>wajar</strong> di masa krisis BBM.</li>`;
@@ -260,6 +607,7 @@
             stratCard.classList.add('danger');
             stratHeader.innerText = "⛔ STATUS: BAHAYA (TERLALU LAMA)";
             document.getElementById('durasi').style.color = "#f85149";
+            status = "BAHAYA (TERLALU LAMA)";
             
             htmlList += `<li><strong>Strategi:</strong> Pertimbangkan untuk batalkan misi. Waktu tunggu >4 jam sangat berisiko.</li>`;
             htmlList += `<li>⏰ Antrian ini sudah melewati batas wajar, bahkan di masa krisis.</li>`;
@@ -273,6 +621,41 @@
         if (configVal === 2) htmlList += `<li style="color:#f85149; font-weight:bold;">⚠️ Petugas Double Job (Kiri-Kanan) memperlambat antrian 2x lipat!</li>`;
 
         stratList.innerHTML = htmlList;
+
+        // FUEL WASTE CALCULATION
+        const fuelWaste = calculateFuelWaste(totalMenit);
+        const fuelWasteContent = document.getElementById('fuelWasteContent');
+        
+        fuelWasteContent.innerHTML = `
+            <div class="fuel-stat">
+                <span class="fuel-label">Durasi Mesin Idle:</span>
+                <span class="fuel-value">${fuelWaste.hours} jam</span>
+            </div>
+            <div class="fuel-stat">
+                <span class="fuel-label">BBM Terbuang (Idle):</span>
+                <span class="fuel-value">${fuelWaste.liters} liter</span>
+            </div>
+            <div class="fuel-stat">
+                <span class="fuel-label">Biaya Terbuang:</span>
+                <span class="fuel-value">Rp ${fuelWaste.cost.toLocaleString()}</span>
+            </div>
+            <div style="margin-top: 10px; padding: 10px; background: rgba(210, 153, 34, 0.1); border-radius: 6px; font-size: 0.85em; color: var(--text-secondary);">
+                💡 <strong>Tips:</strong> Matikan mesin motor saat antri untuk menghemat BBM dan mengurangi polusi!
+            </div>
+        `;
+
+        // SAVE TO GLOBAL STATE
+        lastCalculation = {
+            tankSize,
+            jumlahMotor,
+            configVal,
+            speedVal,
+            totalMenit,
+            finishStr,
+            status,
+            biayaPertalite,
+            biayaPertamax
+        };
     }
 </script>
 

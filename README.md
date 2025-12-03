@@ -26,9 +26,38 @@ Hasil perhitungan adalah **estimasi teoritis**. Kondisi aktual di lapangan dapat
 
 Namun, dalam kondisi normal, selisih perhitungan ini dirancang agar tidak menyimpang terlalu jauh dari realita.
 
+## ✨ Fitur Baru (2025)
+
+### 🎨 Mode Terang/Gelap
+* Toggle tema untuk kenyamanan mata di berbagai kondisi pencahayaan
+* Preferensi tema tersimpan otomatis di browser
+
+### 📋 Riwayat Perhitungan
+* Menyimpan hingga 10 perhitungan terakhir ke LocalStorage browser
+* Akses cepat ke perhitungan sebelumnya dengan sekali klik
+* Fitur hapus riwayat untuk membersihkan data lama
+
+### ⛽ Kalkulator Konsumsi BBM Saat Antri
+* Estimasi BBM yang terbuang saat mesin idle di antrian
+* Perhitungan biaya BBM yang terbuang
+* Tips untuk menghemat BBM dan mengurangi polusi
+
+### 📤 Bagikan Hasil
+* Tombol share untuk membagikan hasil perhitungan
+* Support native share API (mobile)
+* Fallback ke clipboard untuk browser desktop
+
 ## 🚀 Demo Aplikasi
 Coba langsung aplikasinya di sini:
 🔗 **[https://antrianspbu.netlify.app/](https://antrianspbu.netlify.app/)**
 
 ## 📸 Screenshots
-![Tampilan Aplikasi](https://raw.githubusercontent.com/fitrahmaulana/Penghitung-Antrian-SPBU/refs/heads/main/preview.png)
+
+### Mode Gelap (Dark Theme)
+![Mode Gelap](https://github.com/user-attachments/assets/9d424a03-d818-44a5-8208-21838bed2d94)
+
+### Mode Terang (Light Theme)
+![Mode Terang](https://github.com/user-attachments/assets/0ce9aa11-9f17-449b-aec8-0570b7153d1c)
+
+### Hasil Perhitungan dengan Fitur Lengkap
+![Hasil Lengkap](https://github.com/user-attachments/assets/f2471059-e3e4-403d-827d-d1f1bb462bce)
